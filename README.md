@@ -23,6 +23,7 @@ python test_render.py   # abre ventana visual con acciones aleatorias
 ```
 
 ## 4. Estructura del proyecto
+
 rl_projects/
 ├── walker/
 │   ├── train.py
