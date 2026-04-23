@@ -24,19 +24,21 @@ python test_render.py   # abre ventana visual con acciones aleatorias
 
 ## 4. Estructura del proyecto
 
+```
 rl_projects/
 ├── walker/
 │   ├── train.py
 │   ├── demo.py
-│   └── results/        # modelos, gráficas y progreso
+│   └── results/
 ├── ant/
 │   ├── train.py
 │   ├── demo.py
 │   └── results/
-├── humanoid/
-│   ├── train.py
-│   ├── demo.py
-│   └── results/
+└── humanoid/
+    ├── train.py
+    ├── demo.py
+    └── results/
+```
 
 ## 5. Configuración antes de entrenar
 En cada `train.py` cambia estas líneas según lo que quieras entrenar:
