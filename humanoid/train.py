@@ -28,6 +28,7 @@ class GraficaCallback(BaseCallback):
         super().__init__()
         self.recompensas = []
         self.episodios = []
+        self.pasos = []
         self.ep_actual = 0
         self.recompensa_acum = 0
 
@@ -37,6 +38,7 @@ class GraficaCallback(BaseCallback):
             self.ep_actual += 1
             self.recompensas.append(self.recompensa_acum)
             self.episodios.append(self.ep_actual)
+            self.pasos.append(self.num_timesteps)
             print(f"Episodio {self.ep_actual} | Recompensa: {self.recompensa_acum:.1f} | Pasos: {self.num_timesteps}")
             self.recompensa_acum = 0
         return True
@@ -57,6 +59,17 @@ class GraficaCallback(BaseCallback):
         plt.tight_layout()
         plt.savefig(GRAFICA_PATH)
         print(f"✅ Gráfica guardada en {GRAFICA_PATH}")
+
+    def guardar_csv(self):
+        if len(self.recompensas) < 1:
+            return
+        df = pd.DataFrame({
+            "episodio": self.episodios,
+            "pasos": self.pasos,
+            "recompensa": self.recompensas
+        })
+        df.to_csv(CSV_PATH, index=False)
+        print(f"✅ CSV guardado en {CSV_PATH}")
 
 # Cargar pasos previos
 pasos_previos = 0
@@ -94,6 +107,7 @@ def guardar_y_salir(sig, frame):
         f.write(str(pasos_totales))
     print(f"✅ Guardado en {MODELO_PATH} ({pasos_totales} pasos totales)")
     callback.graficar()
+    callback.guardar_csv()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, guardar_y_salir)
@@ -105,6 +119,7 @@ try:
         f.write(str(TOTAL_STEPS))
     print(f"✅ Entrenamiento completo! {TOTAL_STEPS} pasos totales")
     callback.graficar()
+    callback.guardar_csv()
 except Exception as e:
     print(f"Error: {e}")
     guardar_y_salir(None, None)
