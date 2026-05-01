@@ -1,3 +1,6 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
 # Cargar datos
 df = pd.read_csv("mujoco_data.csv")
 

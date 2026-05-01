@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Cargar modelo (cambia por tu XML)
-model = mujoco.MjModel.from_xml_path("model.xml")
+model = mujoco.MjModel.from_xml_path("/home/fernando/rl_env/lib/python3.12/site-packages/gymnasium/envs/mujoco/assets/walker2d.xml")
 data = mujoco.MjData(model)
 
 # Tiempo de simulación
