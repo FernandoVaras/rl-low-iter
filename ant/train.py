@@ -3,6 +3,7 @@ from stable_baselines3 import PPO, SAC
 from stable_baselines3.common.callbacks import BaseCallback
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import os
 import signal
 import sys
@@ -20,6 +21,7 @@ RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results")
 MODELO_PATH = f"{RESULTS_DIR}/{NOMBRE}.zip"
 PROGRESO_PATH = f"{RESULTS_DIR}/{NOMBRE}_pasos.txt"
 GRAFICA_PATH = f"{RESULTS_DIR}/grafica_{NOMBRE}.png"
+CSV_PATH = f"{RESULTS_DIR}/{NOMBRE}_entrenamiento.csv"
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
