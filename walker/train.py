@@ -3,14 +3,15 @@ from stable_baselines3 import PPO, SAC
 from stable_baselines3.common.callbacks import BaseCallback
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import os
 import signal
 import sys
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
-ALGORITMO = "PPO"       # ← PPO, SAC
+ALGORITMO = "SAC"       # ← PPO, SAC
 USE_GSDE = False        # ← True para activar gSDE
-TOTAL_STEPS = 1000_000
+TOTAL_STEPS = 700_000
 # =======================================
 
 ROBOT = "Walker2d"
@@ -20,6 +21,7 @@ RESULTS_DIR = os.path.join(os.path.dirname(__file__), "results")
 MODELO_PATH = f"{RESULTS_DIR}/{NOMBRE}.zip"
 PROGRESO_PATH = f"{RESULTS_DIR}/{NOMBRE}_pasos.txt"
 GRAFICA_PATH = f"{RESULTS_DIR}/grafica_{NOMBRE}.png"
+CSV_PATH = f"{RESULTS_DIR}/{NOMBRE}_entrenamiento.csv"
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -28,6 +30,7 @@ class GraficaCallback(BaseCallback):
         super().__init__()
         self.recompensas = []
         self.episodios = []
+        self.pasos = []
         self.ep_actual = 0
         self.recompensa_acum = 0
 
@@ -37,6 +40,7 @@ class GraficaCallback(BaseCallback):
             self.ep_actual += 1
             self.recompensas.append(self.recompensa_acum)
             self.episodios.append(self.ep_actual)
+            self.pasos.append(self.num_timesteps)
             print(f"Episodio {self.ep_actual} | Recompensa: {self.recompensa_acum:.1f} | Pasos: {self.num_timesteps}")
             self.recompensa_acum = 0
         return True
@@ -57,6 +61,17 @@ class GraficaCallback(BaseCallback):
         plt.tight_layout()
         plt.savefig(GRAFICA_PATH)
         print(f"✅ Gráfica guardada en {GRAFICA_PATH}")
+
+    def guardar_csv(self):
+        if len(self.recompensas) < 1:
+            return
+        df = pd.DataFrame({
+            "episodio": self.episodios,
+            "pasos": self.pasos,
+            "recompensa": self.recompensas
+        })
+        df.to_csv(CSV_PATH, index=False)
+        print(f"✅ CSV guardado en {CSV_PATH}")
 
 # Cargar pasos previos
 pasos_previos = 0
@@ -94,6 +109,7 @@ def guardar_y_salir(sig, frame):
         f.write(str(pasos_totales))
     print(f"✅ Guardado en {MODELO_PATH} ({pasos_totales} pasos totales)")
     callback.graficar()
+    callback.guardar_csv()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, guardar_y_salir)
@@ -105,6 +121,7 @@ try:
         f.write(str(TOTAL_STEPS))
     print(f"✅ Entrenamiento completo! {TOTAL_STEPS} pasos totales")
     callback.graficar()
+    callback.guardar_csv()
 except Exception as e:
     print(f"Error: {e}")
     guardar_y_salir(None, None)

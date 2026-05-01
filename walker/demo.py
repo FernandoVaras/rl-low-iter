@@ -4,7 +4,7 @@ import os
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
 ALGORITMO = "PPO"       # ← PPO, SAC
-USE_GSDE = False        # ← igual que en train.py
+USE_GSDE = True        # ← igual que en train.py
 DEMO_STEPS = 3000
 # =======================================
 
