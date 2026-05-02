@@ -3,8 +3,8 @@ from stable_baselines3 import PPO, SAC
 import os
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
-ALGORITMO = "PPO"       # ← PPO, SAC
-USE_GSDE = True        # ← igual que en train.py
+ALGORITMO = "SAC"       # ← PPO, SAC
+USE_GSDE = False        # ← igual que en train.py
 DEMO_STEPS = 3000
 # =======================================
 

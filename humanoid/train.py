@@ -9,9 +9,9 @@ import signal
 import sys
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
-ALGORITMO = "PPO"       # ← PPO, SAC
+ALGORITMO = "SAC"       # ← PPO, SAC
 USE_GSDE = False        # ← True para activar gSDE
-TOTAL_STEPS = 1000_000
+TOTAL_STEPS = 700_000
 # =======================================
 
 ROBOT = "Humanoid"

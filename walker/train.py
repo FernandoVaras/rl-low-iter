@@ -10,7 +10,7 @@ import sys
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
 ALGORITMO = "SAC"       # ← PPO, SAC
-USE_GSDE = False        # ← True para activar gSDE
+USE_GSDE = True        # ← True para activar gSDE
 TOTAL_STEPS = 700_000
 # =======================================
 
