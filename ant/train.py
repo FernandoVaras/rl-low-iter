@@ -9,7 +9,7 @@ import signal
 import sys
 
 # ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
-ALGORITMO = "SAC"       # ← PPO, SAC
+ALGORITMO = "PPO"       # ← PPO, SAC
 USE_GSDE = True        # ← True para activar gSDE
 TOTAL_STEPS = 700_000
 # =======================================
