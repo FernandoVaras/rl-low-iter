@@ -1,0 +1,28 @@
+# walker2d.yaml
+wrapper:
+  N: 50
+  K: 0
+  warmup_min: 70
+  critical_body: "torso"
+
+culpa:
+  lambda_temporal: 0.1
+  w_qvel: 0.4
+  w_delta_tau: 0.6
+
+margen:
+  lambda_temporal: 0.1
+
+combinacion:
+  alpha: 0.7
+  kappa: 4.0
+  g_min: 1.0
+  g_max: 2.0
+  use_diffusion: false
+  beta: 0.2
+
+decaimiento:
+  lambda_ep: 0.3
+
+modulator:
+  sigma_base: 0.1

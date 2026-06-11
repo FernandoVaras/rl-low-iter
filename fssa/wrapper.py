@@ -3,27 +3,34 @@ import numpy as np
 import gymnasium as gym
 import mujoco
 
-# ===== CONFIGURACIÓN - CAMBIA AQUÍ =====
+# ===== DEFAULTS - se usan si no se pasa config =====
 window_config = {
     "N": 50,
     "K": 0,
     "warmup_min": 50,
     "critical_body": "torso"
 }
-# =======================================
+# ===================================================
 
 
 class FaultCaptureWrapper(gym.Wrapper):
     """
     Wrapper genérico de captura pre-fallo.
-    Monitorea cada paso y cuando detecta terminated=True + not is_healthy
-    entrega los N pasos anteriores en info["fault_window"].
+    Acepta config dict con la sección "wrapper" o el dict plano.
     """
 
     def __init__(self, env, config=None):
         super().__init__(env)
 
-        cfg = config if config is not None else window_config
+        # Soportar tanto config completo (con sección "wrapper")
+        # como dict plano (legacy)
+        if config is None:
+            cfg = window_config
+        elif "wrapper" in config:
+            cfg = config["wrapper"]
+        else:
+            cfg = config
+
         self.N = cfg["N"]
         self.K = cfg["K"]
         self.warmup_min = cfg["warmup_min"]
@@ -46,7 +53,6 @@ class FaultCaptureWrapper(gym.Wrapper):
 
         maxlen = self.N + self.K
 
-        # Buffer circular en memoria — 8 señales
         self.buffer = {
             "qpos":           collections.deque(maxlen=maxlen),
             "qvel":           collections.deque(maxlen=maxlen),
@@ -63,10 +69,8 @@ class FaultCaptureWrapper(gym.Wrapper):
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
 
-        # Acceder a los datos internos de MuJoCo
         data = self.env.unwrapped.data
 
-        # Capturar las 8 señales primarias
         self.buffer["qpos"].append(data.qpos.copy())
         self.buffer["qvel"].append(data.qvel.copy())
         self.buffer["cfrc_ext"].append(data.cfrc_ext.copy())
@@ -78,7 +82,6 @@ class FaultCaptureWrapper(gym.Wrapper):
 
         self.step_count += 1
 
-        # Si hay fallo real y ya pasó el warmup
         is_healthy = getattr(self.env.unwrapped, 'is_healthy', True)
         if terminated and not is_healthy and self.step_count >= self.warmup_min:
             info["fault_window"] = self._extract_window()
@@ -93,11 +96,6 @@ class FaultCaptureWrapper(gym.Wrapper):
         return self.env.reset(**kwargs)
 
     def _extract_window(self):
-        """
-        Extrae la ventana pre-fallo del buffer.
-        Si K=0 devuelve los últimos N pasos.
-        Si K>0 devuelve los N pasos antes del offset K.
-        """
         window = {}
         for key, deque in self.buffer.items():
             arr = np.array(deque)
